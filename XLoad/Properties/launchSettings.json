@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "XLoad": {
+      "commandName": "Project",
+      "commandLineArgs": "-image test.bmp"
+    }
+  }
+}
