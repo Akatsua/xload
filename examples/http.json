@@ -1,0 +1,39 @@
+{
+	"XLoad":
+	{
+		"System":
+		{
+			"DryRun": false,
+			"MaxTasks": -1,
+			"MinTasks": 1,
+			"Plugins": 
+			[
+				{
+					"Name":"XLoad.Http",
+					"Config":"XLoad.Http"
+				}
+			]
+		},
+		"Noise":
+		{
+			"Scale": 0.01,
+			"Seed": 1337,
+			"Resolution": 10
+		},
+		"Load":
+		{
+			"Time": 86400,
+			"Requests": 1000000,
+			"Infinite": false
+		},
+		"Diagnostic":
+		{
+			"Image": "test.bmp"
+		}
+	},
+	"XLoad.Http":
+	{
+		"Url": "http://127.0.0.1",
+		"Method": "GET"
+	}
+}

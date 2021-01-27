@@ -6,7 +6,7 @@
     using System.Linq;
     using Dto;
 
-    public static class Summary
+    public static class SummaryHelper
     {
         public static void WriteTickSummary(
             int currentData, 
@@ -29,7 +29,7 @@
 
         public static void WriteSummary(
             string[] args, 
-            Config config,
+            Dto.Config config,
             int numberOfTicks, 
             List<int> data)
         {
@@ -38,14 +38,14 @@
 ||     Arguments : {string.Join(" ", args)}
 || 
 || Settings :
-||     Dryrun         : {config.DryRun     }
-||     Infinite       : {config.Infinite   }
-||     Seed           : {config.Seed       }
-||     Scale          : {config.Scale      }
-||     Resolution     : {config.Resolution }
-||     Total Requests : {config.Requests   }
-||     Maximum Tasks  : {config.MaxTasks   }
-||     Minimum Tasks  : {config.MinTasks   }
+||     Dryrun         : {config.System.DryRun    }
+||     Infinite       : {config.Load.Infinite    }
+||     Seed           : {config.Noise.Seed       }
+||     Scale          : {config.Noise.Scale      }
+||     Resolution     : {config.Noise.Resolution }
+||     Total Requests : {config.Load.Requests    }
+||     Maximum Tasks  : {config.System.MaxTasks  }
+||     Minimum Tasks  : {config.System.MinTasks  }
 || 
 || Computed values :
 ||     Ticks per time              : {numberOfTicks    }
@@ -53,11 +53,11 @@
 ||     Min requests per resolution : {data.Min()       }
 ||     Avg requests per resolution : {data.Average()   }");
 
-            if (!string.IsNullOrWhiteSpace(config.Image))
+            if (!string.IsNullOrWhiteSpace(config.Diagnostic.Image))
             {
                 Console.WriteLine(@$"
 || Image settings :
-||     File            : {config.Image}
+||     File            : {config.Diagnostic.Image}
 ||     Horizontal Line : {data.Max() / 20} Messages
 ||     Vertical Line   : 1 hour");
             }

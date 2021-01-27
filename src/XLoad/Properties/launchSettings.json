@@ -2,7 +2,9 @@
   "profiles": {
     "XLoad": {
       "commandName": "Project",
-      "commandLineArgs": "-image test.bmp"
+      "environmentVariables": {
+        "XLOAD_SCALE": "0.123"
+      }
     }
   }
 }

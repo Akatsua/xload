@@ -1,0 +1,28 @@
+{
+	"XLoad":
+	{
+		"System":
+		{
+			"DryRun": false,
+			"MaxTasks": -1,
+			"MinTasks": 1,
+			"Plugins": []
+		},
+		"Noise":
+		{
+			"Scale": 0.01,
+			"Seed": 1337,
+			"Resolution": 10
+		},
+		"Load":
+		{
+			"Time": 86400,
+			"Requests": 1000000,
+			"Infinite": false
+		},
+		"Diagnostic":
+		{
+			"Image": "test.bmp"
+		}
+	}
+}

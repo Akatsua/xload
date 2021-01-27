@@ -45,10 +45,13 @@
 namespace XLoad
 {
     using Dto;
+    using External;
     using Helpers;
+    using Microsoft.Extensions.Configuration;
     using System;
     using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
@@ -57,58 +60,109 @@ namespace XLoad
     {
         static void Main(string[] args)
         {
-            var config = new Config();
+            string configFile = "config.json";
 
-            // Argument Parsing
+            // Initial config file environment / argument check
             {
-                args.GetFloatArg( "-scale"      , out config.Scale      , 0.01f         );
-                args.GetIntArg  ( "-seed"       , out config.Seed       , 1337          );
-                args.GetIntArg  ( "-resolution" , out config.Resolution , 10            );
-                args.GetIntArg  ( "-time"       , out config.Time       , 24 * 60 * 60  );
-                args.GetIntArg  ( "-requests"   , out config.Requests   , 1000000       );
-                args.GetIntArg  ( "-maxTasks"   , out config.MaxTasks   , int.MaxValue  );
-                args.GetIntArg  ( "-minTasks"   , out config.MinTasks   , 1             );
-                args.GetStrArg  ( "-image"      , out config.Image      , null          );
-                
-                config.Infinite = args.GetArgExists("-infinite" );
-                config.DryRun   = args.GetArgExists("-dryrun"   );
+                configFile = ConfigHelper.GetEnvironmentStr("XLOAD_CONFIG", configFile);
+                configFile = ConfigHelper.GetStrFromArgs(args, "-config", configFile);
 
-                if (config.Resolution < 1) config.Resolution = 1;
-                if (config.Time       < 1) config.Time       = 24 * 60 * 60;
-                if (config.MaxTasks   < 1) config.MaxTasks   = int.MaxValue;
-                if (config.MinTasks   < 1) config.MinTasks   = 1;
-
-                if (config.Resolution > config.Time)
+                if (!File.Exists(configFile))
                 {
-                    Console.WriteLine("[ERROR] -resolution needs to be smaller than -time");
+                    Console.WriteLine("[ERROR] Config file not found! Aborting...");
+                    return;
+                }
+            }
+
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile(configFile)
+                .Build();
+
+            var config = configuration
+                .GetSection("XLoad")
+                .Get<Config>();
+
+            // Environment variables argument parsing
+            {
+                config.Noise.Scale      = ConfigHelper.GetEnvironmentFloat ( "XLOAD_SCALE"      , config.Noise.Scale      );
+                config.Noise.Seed       = ConfigHelper.GetEnvironmentInt   ( "XLOAD_SEED"       , config.Noise.Seed       );
+                config.Noise.Resolution = ConfigHelper.GetEnvironmentInt   ( "XLOAD_RESOLUTION" , config.Noise.Resolution );
+                config.Load.Time        = ConfigHelper.GetEnvironmentInt   ( "XLOAD_TIME"       , config.Load.Time        );
+                config.Load.Requests    = ConfigHelper.GetEnvironmentInt   ( "XLOAD_REQUESTS"   , config.Load.Requests    );
+                config.Load.Infinite    = ConfigHelper.GetEnvironmentBool  ( "XLOAD_INFINITE"   , config.Load.Infinite    );
+                config.System.MaxTasks  = ConfigHelper.GetEnvironmentInt   ( "XLOAD_MAXTASKS"   , config.System.MaxTasks  );
+                config.System.MinTasks  = ConfigHelper.GetEnvironmentInt   ( "XLOAD_MINTASKS"   , config.System.MinTasks  );
+                config.System.DryRun    = ConfigHelper.GetEnvironmentBool  ( "XLOAD_DRYRUN"     , config.System.DryRun    );
+                config.Diagnostic.Image = ConfigHelper.GetEnvironmentStr   ( "XLOAD_IMAGE"      , config.Diagnostic.Image );
+            }
+
+            // Command line argument parsing
+            {
+                config.Noise.Scale      = ConfigHelper.GetFloatFromArgs ( args, "-scale"      , config.Noise.Scale      );
+                config.Noise.Seed       = ConfigHelper.GetIntFromArgs   ( args, "-seed"       , config.Noise.Seed       );
+                config.Noise.Resolution = ConfigHelper.GetIntFromArgs   ( args, "-resolution" , config.Noise.Resolution );
+                config.Load.Time        = ConfigHelper.GetIntFromArgs   ( args, "-time"       , config.Load.Time        );
+                config.Load.Requests    = ConfigHelper.GetIntFromArgs   ( args, "-requests"   , config.Load.Requests    );
+                config.Load.Infinite    = ConfigHelper.GetBoolFromArgs  ( args, "-infinite"   , config.Load.Infinite    );
+                config.System.MaxTasks  = ConfigHelper.GetIntFromArgs   ( args, "-maxTasks"   , config.System.MaxTasks  );
+                config.System.MinTasks  = ConfigHelper.GetIntFromArgs   ( args, "-minTasks"   , config.System.MinTasks  );
+                config.System.DryRun    = ConfigHelper.GetBoolFromArgs  ( args, "-dryrun"     , config.System.DryRun    );
+                config.Diagnostic.Image = ConfigHelper.GetStrFromArgs   ( args, "-image"      , config.Diagnostic.Image );
+            }
+
+            // Validate configs & apply defaults
+            {
+                if (config.Noise.Scale      == null) { Console.WriteLine("[ERROR] Scale configuration not found! Aborting..."       ); return; }
+                if (config.Noise.Seed       == null) { Console.WriteLine("[ERROR] Seed configuration not found! Aborting..."        ); return; }
+                if (config.Noise.Resolution == null) { Console.WriteLine("[ERROR] Resolution configuration not found! Aborting..."  ); return; }
+                if (config.Load.Time        == null) { Console.WriteLine("[ERROR] Time configuration not found! Aborting..."        ); return; }
+                if (config.Load.Requests    == null) { Console.WriteLine("[ERROR] Requests configuration not found! Aborting..."    ); return; }
+
+                if (config.System.MaxTasks  == null) config.System.MaxTasks = int.MaxValue;
+                if (config.System.MaxTasks  < 1    ) config.System.MaxTasks = int.MaxValue;
+                if (config.System.MinTasks  == null) config.System.MinTasks = 1;
+                if (config.System.MinTasks  < 1    ) config.System.MinTasks = 1;
+
+                if (config.System.DryRun    == null) config.System.DryRun = false;
+                if (config.Load.Infinite    == null) config.Load.Infinite = false;
+
+                if (config.Noise.Resolution > config.Load.Time)
+                {
+                    Console.WriteLine("[ERROR] Resolution needs to be smaller than Time! Aborting...");
+                    return;
                 }
 
-                config.NumTicks = config.Time / config.Resolution;
+                if (config.System.MaxTasks < config.System.MinTasks)
+                {
+                    Console.WriteLine("[ERROR] MinTasks must be smaller than MaxTasks! Aborting...");
+                    return;
+                }
             }
 
             var state = new State()
             {
-                Noise        = new Noise(config.Seed, config.Scale),
+                Noise        = new Noise(config.Noise.Seed.Value, config.Noise.Scale.Value),
+                NumTicks     = config.Load.Time.Value / config.Noise.Resolution.Value,
                 Shutdown     = false,
                 CancelSource = new CancellationTokenSource()
             };
             
             // Diagnostic Data
             {
-                var sample = GenerateTimedData(config.Requests, config.NumTicks, state.Noise);
+                var sample = GenerateTimedData(config.Load.Requests.Value, state.NumTicks, state.Noise);
 
-                Image.WriteImage(config, sample);
-                Summary.WriteSummary(args, config, config.NumTicks, sample);
+                ImageHelper.WriteImage(config, sample);
+                SummaryHelper.WriteSummary(args, config, state.NumTicks, sample);
 
                 state.Noise.Reset();
 
-                if (config.DryRun)
+                if (config.System.DryRun.Value)
                 {
                     return;
                 }
             }
 
-            // Setup graceful shutdown | Handles SIGINT https://github.com/aspnet/Hosting/issues/870#issuecomment-257435212
+            // Setup graceful shutdown https://github.com/aspnet/Hosting/issues/870#issuecomment-257435212
             {
                 Console.CancelKeyPress += (object sender, ConsoleCancelEventArgs e) =>
                 {
@@ -143,26 +197,26 @@ namespace XLoad
             Console.WriteLine($"[{DateTime.Now}] Shutdown complete");
         }
 
-        private static async Task LoadLogicAsync(Config config, State state)
+        private static async Task LoadLogicAsync(Dto.Config config, State state)
         {
             var backlog = new BlockingCollection<Request>();
-            var tasks   = GenerateTasks(backlog, config.MinTasks).ToList();
+            var tasks   = GenerateTasks(backlog, config.System.MinTasks.Value).ToList();
 
             while (!state.Shutdown)
             {
-                var data      = GenerateTimedData(config.Requests, config.NumTicks, state.Noise);
+                var data      = GenerateTimedData(config.Load.Requests.Value, state.NumTicks, state.Noise);
                 var startTime = DateTime.Now;
 
                 for (int tickIndex = 0; tickIndex < data.Count; tickIndex++)
                 {
-                    var timeBetweenRequests  = 1 / ((float)data[tickIndex] / config.Resolution);
+                    var timeBetweenRequests  = 1 / ((float)data[tickIndex] / config.Noise.Resolution.Value);
 
-                    var currentIterationTime = startTime.AddSeconds( tickIndex      * config.Resolution);
-                    var nextIterationTime    = startTime.AddSeconds((tickIndex + 1) * config.Resolution);
+                    var currentIterationTime = startTime.AddSeconds( tickIndex      * config.Noise.Resolution.Value);
+                    var nextIterationTime    = startTime.AddSeconds((tickIndex + 1) * config.Noise.Resolution.Value);
 
-                    int taskDelta = ManageTasks(data[tickIndex], config.MinTasks, config.MaxTasks, backlog, tasks);
+                    int taskDelta = ManageTasks(data[tickIndex], config.System.MinTasks.Value, config.System.MaxTasks.Value, backlog, tasks);
 
-                    Summary.WriteTickSummary(
+                    SummaryHelper.WriteTickSummary(
                         data[tickIndex], backlog, tasks, currentIterationTime,
                         nextIterationTime, taskDelta, DateTime.Now);
 
@@ -194,7 +248,7 @@ namespace XLoad
                     }
                 }
 
-                if (!config.Infinite)
+                if (!config.Load.Infinite.Value)
                 {
                     break;
                 }

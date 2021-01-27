@@ -10,7 +10,7 @@
  *      Stateful interface
  */
 
-namespace XLoad.Helpers
+namespace XLoad.External
 {
     using System;
     using System.Collections.Generic;

@@ -1,23 +1,22 @@
 ﻿namespace XLoad.Helpers
 {
-    using Dto;
     using System;
     using System.Collections.Generic;
     using System.Drawing;
     using System.Drawing.Imaging;
     using System.Linq;
 
-    public static class Image
+    public static class ImageHelper
     {
         public static void WriteImage(
-            Config config,
+            Dto.Config config,
             List<int> data)
         {
-            if (!string.IsNullOrWhiteSpace(config.Image))
+            if (!string.IsNullOrWhiteSpace(config.Diagnostic.Image))
             {
                 try
                 {
-                    SaveBitmap(config.Image, data.ToArray(), config.Resolution);
+                    SaveBitmap(config.Diagnostic.Image, data.ToArray(), config.Noise.Resolution.Value);
                 }
                 catch (Exception ex)
                 {

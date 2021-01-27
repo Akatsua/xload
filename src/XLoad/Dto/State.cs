@@ -1,7 +1,7 @@
 ﻿namespace XLoad.Dto
 {
-    using global::XLoad.Helpers;
     using System.Threading;
+    using External;
 
     public class State
     {
@@ -11,6 +11,7 @@
         
         // Data Generation
         public Noise Noise { get; set; }
+        public int NumTicks { get; set; }
 
     }
 }
