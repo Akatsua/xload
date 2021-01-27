@@ -12,31 +12,34 @@ At this point in time, for this to work, insert your code into << INSERT CODE HE
   
 ## Arguments
 ### General
-   -dryrun
-	 | Do not automatically start the load
+   - -dryrun
+     - Do not automatically start the load
 ### Noise Generation
-   -scale <float>
-	 | Scale for the Simplex Noise generation
-	 | Default : 0.001
-   -seed <int> 
-	 | Seed for the Simplex Noise generation
-	 | Default : 1337
-   -resolution <int>
-	 | Frequency (in seconds) for which a new point is generated 
-	 | Default: 60 (one minute)       
+   - -scale <float>
+     - Scale for the Simplex Noise generation
+     - Default : 0.001
+   
+   - -seed <int> 
+     - Seed for the Simplex Noise generation
+     - Default : 1337
+   
+   - -resolution <int>
+     - Frequency (in seconds) for which a new point is generated 
+     - Default: 60 (one minute)       
+	
 ### Load Generation
-   -time <int>
-	 | Amount of seconds for the system to run
-	 | Default : 86400 (one day)
-   -infite
-	 | If this argument is used, the system will continue to operate after the -time
-   -requests <int>
-	 | Number of requests to be performed in -time
-	 | Default : 1000000
-   -maxtasks <int>
-	 | Maximum amount of TPL tasks the system will generate
-   -mintasks <int>
-	 | Minimum amount of TPL tasks the system will generate
+   - -time <int>
+     - Amount of seconds for the system to run
+     - Default : 86400 (one day)
+   - -infite
+     - If this argument is used, the system will continue to operate after the -time
+   - -requests <int>
+     - Number of requests to be performed in -time
+     - Default : 1000000
+   - -maxtasks <int>
+     - Maximum amount of TPL tasks the system will generate
+   - -mintasks <int>
+     - Minimum amount of TPL tasks the system will generate
 ### Image Generation
-   -image <file path>
-	 | Path for the creation of a bmp file with the generated graph
+   - -image <file path>
+     - Path for the creation of a bmp file with the generated graph
