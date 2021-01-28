@@ -6,7 +6,8 @@
  *     At this point in time, for this to work, insert your code into << INSERT CODE HERE >>
  *     
  *   Future work
- *     - Run .dll code instead of replacing code
+ *     - Add config check inside plugins
+ *     - Use AssemblyLoadContext + Refactor plugin Load
  *     - Log to file instead of console
  *     - Better sample image generation
  *     
@@ -55,6 +56,7 @@ namespace XLoad
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using global::XLoad.Plugin;
 
     partial class XLoad
     {
@@ -141,12 +143,31 @@ namespace XLoad
 
             var state = new State()
             {
-                Noise        = new Noise(config.Noise.Seed.Value, config.Noise.Scale.Value),
-                NumTicks     = config.Load.Time.Value / config.Noise.Resolution.Value,
-                Shutdown     = false,
-                CancelSource = new CancellationTokenSource()
+                Noise = new Noise(config.Noise.Seed.Value, config.Noise.Scale.Value),
+                NumTicks = config.Load.Time.Value / config.Noise.Resolution.Value,
+                Shutdown = false,
+                CancelSource = new CancellationTokenSource(),
+                Plugins = new List<IPlugin>()
             };
-            
+
+            // Check plugins
+            {
+                foreach (var item in config.System.Plugins)
+                {
+                    var pluginFile = Directory
+                        .EnumerateFiles(Directory.GetCurrentDirectory(), item.Name + ".dll", SearchOption.AllDirectories)
+                        .FirstOrDefault();
+
+                    var pluginConfig   = configuration.GetSection(item.Config);
+                    var pluginAssembly = PluginLoader.LoadPlugin(pluginFile);
+                    var pluginObject   = PluginLoader.GetPluginFromAssembly(pluginAssembly);
+
+                    pluginObject.Initialize(pluginConfig);
+
+                    state.Plugins.Add(pluginObject);
+                }
+            }
+
             // Diagnostic Data
             {
                 var sample = GenerateTimedData(config.Load.Requests.Value, state.NumTicks, state.Noise);
@@ -197,7 +218,7 @@ namespace XLoad
             Console.WriteLine($"[{DateTime.Now}] Shutdown complete");
         }
 
-        private static async Task LoadLogicAsync(Dto.Config config, State state)
+        private static async Task LoadLogicAsync(Config config, State state)
         {
             var backlog = new BlockingCollection<Request>();
             var tasks   = GenerateTasks(backlog, config.System.MinTasks.Value).ToList();
@@ -222,7 +243,7 @@ namespace XLoad
 
                     for (int i = 0; i < data[tickIndex]; i++)
                     {
-                        backlog.Add(new Request(currentIterationTime.AddSeconds(timeBetweenRequests * i)));
+                        backlog.Add(new Request(currentIterationTime.AddSeconds(timeBetweenRequests * i), state.Plugins));
                     }
 
                     // Task.Delay will wait for X amount of milliseconds but its constraint by the systems clock resolution, 
@@ -374,7 +395,10 @@ namespace XLoad
 
                     try
                     {
-                        // << INSERT CODE HERE >>
+                        Task.WaitAll(
+                            request.Plugins
+                                .Select(p => p.ExecuteAsync())
+                                .ToArray());
                     }
                     catch (Exception ex)
                     {

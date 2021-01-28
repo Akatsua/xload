@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XLoad", "src\XLoad\XLoad.csproj", "{23E4ED91-3742-4164-874D-26F93E0CCC40}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XLoad.Plugin", "XLoad.Plugin\XLoad.Plugin.csproj", "{F34C24B2-D851-4ABF-ADDB-5D4884F3272C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XLoad.Http", "XLoad.Http\XLoad.Http.csproj", "{39C2CAFD-4D23-456F-880F-CE1C1B7A1147}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{23E4ED91-3742-4164-874D-26F93E0CCC40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{23E4ED91-3742-4164-874D-26F93E0CCC40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{23E4ED91-3742-4164-874D-26F93E0CCC40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F34C24B2-D851-4ABF-ADDB-5D4884F3272C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F34C24B2-D851-4ABF-ADDB-5D4884F3272C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F34C24B2-D851-4ABF-ADDB-5D4884F3272C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F34C24B2-D851-4ABF-ADDB-5D4884F3272C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39C2CAFD-4D23-456F-880F-CE1C1B7A1147}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39C2CAFD-4D23-456F-880F-CE1C1B7A1147}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39C2CAFD-4D23-456F-880F-CE1C1B7A1147}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39C2CAFD-4D23-456F-880F-CE1C1B7A1147}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
