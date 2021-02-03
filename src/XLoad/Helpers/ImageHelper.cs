@@ -1,5 +1,6 @@
 ﻿namespace XLoad.Helpers
 {
+    using Dto;
     using System;
     using System.Collections.Generic;
     using System.Drawing;
@@ -9,7 +10,7 @@
     public static class ImageHelper
     {
         public static void WriteImage(
-            Dto.Config config,
+            Config config,
             List<int> data)
         {
             if (!string.IsNullOrWhiteSpace(config.Diagnostic.Image))

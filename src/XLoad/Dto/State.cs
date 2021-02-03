@@ -1,7 +1,9 @@
 ﻿namespace XLoad.Dto
 {
+    using System.Collections.Generic;
     using System.Threading;
     using External;
+    using Plugin;
 
     public class State
     {
@@ -12,6 +14,9 @@
         // Data Generation
         public Noise Noise { get; set; }
         public int NumTicks { get; set; }
+
+        // Plugins
+        public List<IPlugin> Plugins { get; set; }
 
     }
 }

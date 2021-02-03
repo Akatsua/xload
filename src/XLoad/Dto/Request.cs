@@ -1,8 +1,10 @@
 ﻿namespace XLoad.Dto
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
+    using Plugin;
 
     public class RequestTask
     {
@@ -20,9 +22,12 @@
     {
         public DateTime RunAt { get; set; }
 
-        public Request(DateTime runAt)
+        public List<IPlugin> Plugins { get; set; }
+
+        public Request(DateTime runAt, List<IPlugin> plugins)
         {
             this.RunAt = runAt;
+            this.Plugins = plugins;
         }
     }
 }

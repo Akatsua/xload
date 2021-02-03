@@ -33,7 +33,8 @@
 	},
 	"XLoad.Http":
 	{
-		"Url": "http://127.0.0.1",
-		"Method": "GET"
+		"Uri": "http://127.0.0.1",
+		"Method": "GET",
+		"Concurrency": 10
 	}
 }

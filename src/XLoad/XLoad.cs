@@ -1,48 +1,4 @@
-﻿/* XLoad
- * 
- *   Overview
- *     This code will run a specified code X amount of times using simplex noise generation
- *     to somewhat generate a natural load on the code.
- *     At this point in time, for this to work, insert your code into << INSERT CODE HERE >>
- *     
- *   Future work
- *     - Run .dll code instead of replacing code
- *     - Log to file instead of console
- *     - Better sample image generation
- *     
- *   Arguments:
- *     General
- *       -dryrun
- *         | Do not automatically start the load
- *     Noise Generation
- *       -scale <float>
- *         | Scale for the Simplex Noise generation
- *         | Default : 0.001
- *       -seed <int> 
- *         | Seed for the Simplex Noise generation
- *         | Default : 1337
- *       -resolution <int>
- *         | Frequency (in seconds) for which a new point is generated 
- *         | Default: 60 (one minute)       
- *     Load Generation
- *       -time <int>
- *         | Amount of seconds for the system to run
- *         | Default : 86400 (one day)
- *       -infite
- *         | If this argument is used, the system will continue to operate after the -time
- *       -requests <int>
- *         | Number of requests to be performed in -time
- *         | Default : 1000000
- *       -maxtasks <int>
- *         | Maximum amount of TPL tasks the system will generate
- *       -mintasks <int>
- *         | Minimum amount of TPL tasks the system will generate
- *     Image Generation
- *       -image <file path>
- *         | Path for the creation of a bmp file with the generated graph
- */
-
-namespace XLoad
+﻿namespace XLoad
 {
     using Dto;
     using External;
@@ -55,6 +11,9 @@ namespace XLoad
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
+    using Plugin;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     partial class XLoad
     {
@@ -81,6 +40,9 @@ namespace XLoad
             var config = configuration
                 .GetSection("XLoad")
                 .Get<Config>();
+
+            // Improve this for plugins (issues with references on IConfiguration)
+            var jsonconfig = JsonConvert.DeserializeObject<JToken>(File.ReadAllText(configFile));
 
             // Environment variables argument parsing
             {
@@ -141,12 +103,37 @@ namespace XLoad
 
             var state = new State()
             {
-                Noise        = new Noise(config.Noise.Seed.Value, config.Noise.Scale.Value),
-                NumTicks     = config.Load.Time.Value / config.Noise.Resolution.Value,
-                Shutdown     = false,
-                CancelSource = new CancellationTokenSource()
+                Noise = new Noise(config.Noise.Seed.Value, config.Noise.Scale.Value),
+                NumTicks = config.Load.Time.Value / config.Noise.Resolution.Value,
+                Shutdown = false,
+                CancelSource = new CancellationTokenSource(),
+                Plugins = new List<IPlugin>()
             };
-            
+
+            // Check plugins
+            {
+                foreach (var item in config.System.Plugins)
+                {
+                    var pluginFile = Directory
+                        .EnumerateFiles(Directory.GetCurrentDirectory(), item.Name + ".dll", SearchOption.AllDirectories)
+                        .FirstOrDefault();
+
+                    var configJson = jsonconfig
+                        .Children()
+                        .Select(c => (JProperty)c)
+                        .FirstOrDefault(c => c.Name == item.Config)
+                        .Value;
+
+                    var pluginConfig   = configuration.GetSection(item.Config);
+                    var pluginAssembly = PluginLoader.LoadPlugin(pluginFile);
+                    var pluginObject   = PluginLoader.GetPluginFromAssembly(pluginAssembly);
+
+                    pluginObject.Initialize(JsonConvert.SerializeObject(configJson));
+
+                    state.Plugins.Add(pluginObject);
+                }
+            }
+
             // Diagnostic Data
             {
                 var sample = GenerateTimedData(config.Load.Requests.Value, state.NumTicks, state.Noise);
@@ -197,7 +184,7 @@ namespace XLoad
             Console.WriteLine($"[{DateTime.Now}] Shutdown complete");
         }
 
-        private static async Task LoadLogicAsync(Dto.Config config, State state)
+        private static async Task LoadLogicAsync(Config config, State state)
         {
             var backlog = new BlockingCollection<Request>();
             var tasks   = GenerateTasks(backlog, config.System.MinTasks.Value).ToList();
@@ -222,7 +209,7 @@ namespace XLoad
 
                     for (int i = 0; i < data[tickIndex]; i++)
                     {
-                        backlog.Add(new Request(currentIterationTime.AddSeconds(timeBetweenRequests * i)));
+                        backlog.Add(new Request(currentIterationTime.AddSeconds(timeBetweenRequests * i), state.Plugins));
                     }
 
                     // Task.Delay will wait for X amount of milliseconds but its constraint by the systems clock resolution, 
@@ -374,7 +361,10 @@ namespace XLoad
 
                     try
                     {
-                        // << INSERT CODE HERE >>
+                        Task.WaitAll(
+                            request.Plugins
+                                .Select(p => p.ExecuteAsync())
+                                .ToArray());
                     }
                     catch (Exception ex)
                     {
