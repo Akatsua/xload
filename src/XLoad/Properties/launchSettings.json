@@ -1,10 +1,7 @@
 {
   "profiles": {
     "XLoad": {
-      "commandName": "Project",
-      "environmentVariables": {
-        "XLOAD_SCALE": "0.123"
-      }
+      "commandName": "Project"
     }
   }
 }

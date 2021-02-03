@@ -3,44 +3,19 @@
  *   Overview
  *     This code will run a specified code X amount of times using simplex noise generation
  *     to somewhat generate a natural load on the code.
- *     At this point in time, for this to work, insert your code into << INSERT CODE HERE >>
+ *     The system will run the Execute() function on the plugins on the specified schedule,
+ *     increasing/decreasing the number of tasks running the system to keep it stable.
  *     
- *   Future work
- *     - Add config check inside plugins
- *     - Use AssemblyLoadContext + Refactor plugin Load
- *     - Log to file instead of console
- *     - Better sample image generation
+ *   Configuration
+ *     To configure plugins, a .json file is needed - check the examples folder.
+ *     System configurations can come from multiple sources with different priorities, as 
+ *     follows (Higher priority to lower priority):
+ *       1. Command Line
+ *       2. Environment Variables
+ *       3. Configuration File
+ *     If a variable exists in two of the sources, the higher priority will override the 
+ *     lower priority.
  *     
- *   Arguments:
- *     General
- *       -dryrun
- *         | Do not automatically start the load
- *     Noise Generation
- *       -scale <float>
- *         | Scale for the Simplex Noise generation
- *         | Default : 0.001
- *       -seed <int> 
- *         | Seed for the Simplex Noise generation
- *         | Default : 1337
- *       -resolution <int>
- *         | Frequency (in seconds) for which a new point is generated 
- *         | Default: 60 (one minute)       
- *     Load Generation
- *       -time <int>
- *         | Amount of seconds for the system to run
- *         | Default : 86400 (one day)
- *       -infite
- *         | If this argument is used, the system will continue to operate after the -time
- *       -requests <int>
- *         | Number of requests to be performed in -time
- *         | Default : 1000000
- *       -maxtasks <int>
- *         | Maximum amount of TPL tasks the system will generate
- *       -mintasks <int>
- *         | Minimum amount of TPL tasks the system will generate
- *     Image Generation
- *       -image <file path>
- *         | Path for the creation of a bmp file with the generated graph
  */
 
 namespace XLoad
@@ -56,7 +31,9 @@ namespace XLoad
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using global::XLoad.Plugin;
+    using Plugin;
+    using Newtonsoft.Json;
+    using Newtonsoft.Json.Linq;
 
     partial class XLoad
     {
@@ -83,6 +60,9 @@ namespace XLoad
             var config = configuration
                 .GetSection("XLoad")
                 .Get<Config>();
+
+            // Improve this for plugins (issues with references on IConfiguration)
+            var jsonconfig = JsonConvert.DeserializeObject<JToken>(File.ReadAllText(configFile));
 
             // Environment variables argument parsing
             {
@@ -158,11 +138,17 @@ namespace XLoad
                         .EnumerateFiles(Directory.GetCurrentDirectory(), item.Name + ".dll", SearchOption.AllDirectories)
                         .FirstOrDefault();
 
+                    var configJson = jsonconfig
+                        .Children()
+                        .Select(c => (JProperty)c)
+                        .FirstOrDefault(c => c.Name == item.Config)
+                        .Value;
+
                     var pluginConfig   = configuration.GetSection(item.Config);
                     var pluginAssembly = PluginLoader.LoadPlugin(pluginFile);
                     var pluginObject   = PluginLoader.GetPluginFromAssembly(pluginAssembly);
 
-                    pluginObject.Initialize(pluginConfig);
+                    pluginObject.Initialize(JsonConvert.SerializeObject(configJson));
 
                     state.Plugins.Add(pluginObject);
                 }

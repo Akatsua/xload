@@ -1,6 +1,5 @@
 ﻿namespace XLoad.Plugin
 {
-    using Plugin;
     using System;
     using System.IO;
     using System.Linq;

@@ -6,8 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!--<PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />-->
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
@@ -17,5 +15,9 @@
       <ExcludeAssets>runtime</ExcludeAssets>
     </ProjectReference>
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="xcopy $(TargetDir)* $(SolutionDir)src\XLoad\bin\Debug\netcoreapp3.1\plugins\XLoad.Http /Y" />
+  </Target>
 
 </Project>

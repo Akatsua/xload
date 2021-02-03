@@ -1,7 +1,6 @@
 ﻿namespace XLoad.Http
 {
-    using Microsoft.Extensions.Configuration;
-    using System;
+    using Newtonsoft.Json;
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
@@ -14,9 +13,9 @@
         private HttpClient   HttpClient   = null;
         private ServicePoint ServicePoint = null;
 
-        public void Initialize(IConfiguration configuration)
+        public void Initialize(string configuration)
         {
-            this.Config = configuration.Get<Config>();
+            this.Config = JsonConvert.DeserializeObject<Config>(configuration);
             this.ServicePoint = ServicePointManager.FindServicePoint(Config.Uri);
             this.ServicePoint.ConnectionLimit = Config.Concurrency;
             this.HttpClient = new HttpClient();
@@ -26,14 +25,12 @@
         {
             if (this.Config.Method == Config.MethodEnum.GET)
             {
-                await this.HttpClient.GetAsync(this.Config.Uri);
+                var test = await this.HttpClient.GetAsync(this.Config.Uri);
             }
             else if (this.Config.Method == Config.MethodEnum.POST)
             {
                 await this.HttpClient.PostAsync(this.Config.Uri, new StringContent(this.Config.Body));
             }
-
-            Console.WriteLine("I run");
         }
 
         public void Clean()
