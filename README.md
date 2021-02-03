@@ -34,7 +34,7 @@ If a variable exists in two of the sources, the higher priority will override th
 | -dryrun      | XLOAD_DRYRUN         | XLoad.System.DryRun                    | bool       | If true, do not automatically start the load system                           |
 | -            | -                    | XLoad.System.Plugins                   | array      | Array of objects describing the plugins to be loaded and their configurations |
 | -image       | XLOAD_IMAGE          | XLoad.Diagnostic.Image                 | string     | Path for the creation of a bmp file with the generated graph                  |
-| -            | -                    | <<Config Var in XLoad.System.Plugins>> | object     | The configurations to be passed to the plugin                                 |
+| -            | -                    | {Config Var in XLoad.System.Plugins} | object     | The configurations to be passed to the plugin                                 |
 
 ## Future work
 - Better sample image generation
