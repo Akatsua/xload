@@ -10,15 +10,17 @@
     {
         public static Assembly LoadPlugin(string pluginPath)
         {
-            var assembly = Assembly.LoadFile(pluginPath);
+            PluginLoadContext loadContext = new PluginLoadContext(pluginPath);
 
-            return assembly;
+            return loadContext.LoadFromAssemblyName(new AssemblyName(Path.GetFileNameWithoutExtension(pluginPath)));
         }
 
         public static IPlugin GetPluginFromAssembly(Assembly assembly)
         {
             var interfaceType = typeof(IPlugin);
-            
+
+            var types = assembly.GetTypes();
+
             return assembly.GetTypes()
                 .Where(type => interfaceType.IsAssignableFrom(type))
                 .Select(type => Activator.CreateInstance(type) as IPlugin)
