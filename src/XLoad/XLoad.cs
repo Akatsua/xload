@@ -1,24 +1,4 @@
-﻿/* XLoad
- * 
- *   Overview
- *     This code will run a specified code X amount of times using simplex noise generation
- *     to somewhat generate a natural load on the code.
- *     The system will run the Execute() function on the plugins on the specified schedule,
- *     increasing/decreasing the number of tasks running the system to keep it stable.
- *     
- *   Configuration
- *     To configure plugins, a .json file is needed - check the examples folder.
- *     System configurations can come from multiple sources with different priorities, as 
- *     follows (Higher priority to lower priority):
- *       1. Command Line
- *       2. Environment Variables
- *       3. Configuration File
- *     If a variable exists in two of the sources, the higher priority will override the 
- *     lower priority.
- *     
- */
-
-namespace XLoad
+﻿namespace XLoad
 {
     using Dto;
     using External;
