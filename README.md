@@ -71,6 +71,7 @@ To configure the plugin itself, you use the Plugins[i].Config value to indicate 
        "config2": 2,
        "config3": 3
     }
+}
 ```
 
 
