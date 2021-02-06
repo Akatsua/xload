@@ -54,7 +54,7 @@
             var index = Array.IndexOf(args, placeholder);
 
             if (index >= 0 &&
-                index + 1 > args.Length &&
+                index + 1 < args.Length &&
                 bool.TryParse(args[index + 1], out bool value))
             {
                 return value;

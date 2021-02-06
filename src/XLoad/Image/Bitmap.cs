@@ -18,17 +18,21 @@
 
         private byte[] Data;
 
-        public Bitmap(uint width, uint height)
+        public bool Invert;
+
+        public Bitmap(uint width, uint height, bool invert = false)
         {
             this.Width      = width;
             this.Height     = height;
 
-            this.Pad        = (4 - (width % 4)) % 4;
+            this.Pad        = (4 - ((width * 3) % 4)) % 4;
             this.LineSize   = (width * 3) + this.Pad;
             this.DataSize   = this.LineSize * height;
             
             this.Descriptor = new BitmapDescriptor(width, height);
             this.Data       = new byte[DataSize];
+
+            this.Invert     = invert;
         }
 
         public void SetPixel(int x, int y, Color color)
@@ -38,7 +42,16 @@
 
         private void SetPixel(uint x, uint y, byte r, byte g, byte b)
         {
-            uint index = ((this.Height - 1 - y) * this.LineSize) + (x * 3);
+            uint index = 0;
+
+            if (this.Invert)
+            {
+                index = (y * this.LineSize) + (x * 3);
+            }
+            else
+            {
+                index = ((this.Height - 1 - y) * this.LineSize) + (x * 3);
+            }
 
             this.Data[index + 0] = b;
             this.Data[index + 1] = g;
