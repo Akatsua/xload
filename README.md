@@ -75,8 +75,16 @@ To configure the plugin itself, you use the Plugins[i].Config value to indicate 
 }
 ```
 
+## Diagnostic Image
+
+To better inspect the load that XLoad will generate, you can generate a sample image that shows the progress for the first 2 hours of the program running.
+
+![diagnostic-image](images/diagnostic-image.bmp)
+
+
 
 ## Future work
+
 - Better sample image generation
 - Improve configuration pass to plugin
 - Improve observability (+plugin) (+file)
