@@ -1,10 +1,10 @@
 ﻿namespace XLoad.Helpers
 {
     using Dto;
+    using Image;
     using System;
     using System.Collections.Generic;
     using System.Drawing;
-    using System.Drawing.Imaging;
     using System.Linq;
 
     public static class ImageHelper
@@ -31,15 +31,15 @@
             int[] data,
             int resolution)
         {
-            int height = data.Max() + 1;
-            int height2 = data.Max();
+            int height = data.Max();
+            int height2 = height + 1;
 
-            Bitmap bmp = new Bitmap(data.Length, height, PixelFormat.Format24bppRgb);
+            Bitmap bmp = new Bitmap((uint)data.Length, (uint)height2);
 
             // Background
             for (int x = 0; x < data.Length; x++)
             {
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < height2; y++)
                 {
                     bmp.SetPixel(x, y, Color.White);
                 }
@@ -48,18 +48,18 @@
             // Hour marks
             for (int i = 0; i < data.Length; i += (60 * 60 / resolution))
             {
-                for (int y = 0; y < height; y++)
+                for (int y = 0; y < height2; y++)
                 {
                     bmp.SetPixel(i, y, Color.OrangeRed);
                 }
             }
 
             // Message marks
-            for (int i = 0; i < height; i += height2 / 20)
+            for (int i = 0; i < height2; i += height / 20)
             {
                 for (int x = 0; x < data.Length; x++)
                 {
-                    bmp.SetPixel(x, height2 - i, Color.DarkRed);
+                    bmp.SetPixel(x, height - i, Color.DarkRed);
                 }
             }
 
@@ -68,7 +68,7 @@
             {
                 if (i + 1 < data.Length)
                 {
-                    var toPaint = GetPointsOnLine(i, height2 - data[i], i + 1, height2 - data[i + 1]);
+                    var toPaint = GetPointsOnLine(i, height - data[i], i + 1, height - data[i + 1]);
 
                     foreach (var item in toPaint)
                     {
@@ -76,7 +76,7 @@
                     }
                 }
 
-                bmp.SetPixel(i, height2 - data[i], Color.Green);
+                bmp.SetPixel(i, height - data[i], Color.Green);
             }
 
             bmp.Save(file);

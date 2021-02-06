@@ -17,7 +17,13 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy $(TargetDir)* $(SolutionDir)src\XLoad\bin\Debug\netcoreapp3.1\plugins\XLoad.Http /Y" />
+    <ItemGroup>
+      <MockFile Include="$(TargetDir)*" />
+    </ItemGroup>
+    <Copy 
+      SourceFiles="@(MockFile)" 
+      DestinationFolder="$(SolutionDir)src\XLoad\bin\Debug\netcoreapp3.1\plugins\XLoad.Http" 
+      SkipUnchangedFiles="true" />
   </Target>
 
 </Project>
