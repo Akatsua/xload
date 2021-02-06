@@ -26,6 +26,7 @@ If a variable exists in two of the sources, the higher priority will override th
 
 | Command Line | Environment Variable | Configuration File                     | Value Type | Description                                                                   |
 |--------------|----------------------|----------------------------------------|------------|-------------------------------------------------------------------------------|
+| -config      | XLOAD_CONFIG         | -                                      | string     | Path to the json configuration file 
 | -scale       | XLOAD_SCALE          | XLoad.Noise.Scale                      | float      | Scale for the Simplex Noise generation                                        |
 | -seed        | XLOAD_SEED           | XLoad.Noise.Seed                       | int        | Seed for the noise generation                                                 |
 | -resolution  | XLOAD_RESOLUTION     | XLoad.Noise.Resolution                 | int        | Frequency (in seconds) for which a new point is generated                     |
@@ -37,7 +38,7 @@ If a variable exists in two of the sources, the higher priority will override th
 | -dryrun      | XLOAD_DRYRUN         | XLoad.System.DryRun                    | bool       | If true, do not automatically start the load system                           |
 | -            | -                    | XLoad.System.Plugins                   | array      | Array of objects describing the plugins to be loaded and their configurations |
 | -image       | XLOAD_IMAGE          | XLoad.Diagnostic.Image                 | string     | Path for the creation of a bmp file with the generated graph                  |
-| -            | -                    | {Config Var in XLoad.System.Plugins} | object     | The configurations to be passed to the plugin                                 |
+| -            | -                    | {Config Var in XLoad.System.Plugins}   | object     | The configurations to be passed to the plugin                                 |
 
 ### XLoad.System.Plugin
 
