@@ -101,7 +101,7 @@
                 return current;
             }
 
-            if(int.TryParse(str, out int value))
+            if(!int.TryParse(str, out int value))
             {
                 return current;
             }
@@ -118,7 +118,7 @@
                 return current;
             }
 
-            if(bool.TryParse(str, out bool value))
+            if(!bool.TryParse(str, out bool value))
             {
                 return current;
             }
