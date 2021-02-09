@@ -1,8 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,8 +19,6 @@
     <ItemGroup>
       <FileList Include="$(TargetDir)**\*.*" />
     </ItemGroup>
-    <Copy SourceFiles="@(FileList)" DestinationFiles="@(FileList->'$(SolutionDir)src\XLoad\bin\Debug\netcoreapp3.1\plugins\XLoad.Http\%(RecursiveDir)%(Filename)%(Extension)')" />
+    <Copy SourceFiles="@(FileList)" DestinationFiles="@(FileList->'$(SolutionDir)src\XLoad\bin\Debug\netcoreapp3.1\plugins\XLoad.Console\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
-
-
 </Project>

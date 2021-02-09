@@ -4,10 +4,16 @@
 		"System":
 		{
 			"DryRun": false,
-			"NoStats": false,
+			"NoStats": true,
 			"MaxTasks": -1,
 			"MinTasks": 1,
-			"Plugins": []
+			"Plugins": 
+			[
+				{
+					"Name":"XLoad.Console",
+					"Config":"XLoad.Console"
+				}
+			]
 		},
 		"Noise":
 		{
@@ -25,5 +31,10 @@
 		{
 			"Image": "test.bmp"
 		}
+	},
+	"XLoad.Console":
+	{
+		"Label": "label",
+		"Body": "Test data test data test data test data test data test data test data"
 	}
 }

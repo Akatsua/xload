@@ -4,7 +4,7 @@
     using System.Net;
     using System.Net.Http;
     using System.Threading.Tasks;
-    using XLoad.Http.Dto;
+    using Dto;
     using XLoad.Plugin;
 
     public class Plugin : IPlugin

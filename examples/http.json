@@ -4,6 +4,7 @@
 		"System":
 		{
 			"DryRun": false,
+			"NoStats": false,
 			"MaxTasks": -1,
 			"MinTasks": 1,
 			"Plugins": 

@@ -7,7 +7,13 @@
 			"NoStats": false,
 			"MaxTasks": -1,
 			"MinTasks": 1,
-			"Plugins": []
+			"Plugins": 
+			[
+				{
+					"Name":"XLoad.Kafka",
+					"Config":"XLoad.Kafka"
+				}
+			]
 		},
 		"Noise":
 		{
@@ -25,5 +31,16 @@
 		{
 			"Image": "test.bmp"
 		}
+	},
+	"XLoad.Kafka":
+	{
+		"Nodes": [
+			"kafkanode01:9094",
+			"kafkanode02:9094",
+			"kafkanode03:9094"
+		],
+		"Topic": "t01",
+		"Username": "User",
+		"Password": "Pass"
 	}
 }
