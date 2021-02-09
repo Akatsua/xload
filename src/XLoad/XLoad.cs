@@ -55,6 +55,7 @@
                 config.System.MaxTasks  = ConfigHelper.GetEnvironmentInt   ( "XLOAD_MAXTASKS"   , config.System.MaxTasks  );
                 config.System.MinTasks  = ConfigHelper.GetEnvironmentInt   ( "XLOAD_MINTASKS"   , config.System.MinTasks  );
                 config.System.DryRun    = ConfigHelper.GetEnvironmentBool  ( "XLOAD_DRYRUN"     , config.System.DryRun    );
+                config.System.NoStats   = ConfigHelper.GetEnvironmentBool  ( "XLOAD_NOSTATS"    , config.System.NoStats   );
                 config.Diagnostic.Image = ConfigHelper.GetEnvironmentStr   ( "XLOAD_IMAGE"      , config.Diagnostic.Image );
             }
 
@@ -69,6 +70,7 @@
                 config.System.MaxTasks  = ConfigHelper.GetIntFromArgs   ( args, "-maxTasks"   , config.System.MaxTasks  );
                 config.System.MinTasks  = ConfigHelper.GetIntFromArgs   ( args, "-minTasks"   , config.System.MinTasks  );
                 config.System.DryRun    = ConfigHelper.GetBoolFromArgs  ( args, "-dryrun"     , config.System.DryRun    );
+                config.System.NoStats   = ConfigHelper.GetBoolFromArgs  ( args, "-nostats"    , config.System.NoStats   );
                 config.Diagnostic.Image = ConfigHelper.GetStrFromArgs   ( args, "-image"      , config.Diagnostic.Image );
             }
 
@@ -85,8 +87,9 @@
                 if (config.System.MinTasks  == null) config.System.MinTasks = 1;
                 if (config.System.MinTasks  < 1    ) config.System.MinTasks = 1;
 
-                if (config.System.DryRun    == null) config.System.DryRun = false;
-                if (config.Load.Infinite    == null) config.Load.Infinite = false;
+                if (config.System.DryRun    == null) config.System.DryRun  = false;
+                if (config.System.NoStats   == null) config.System.NoStats = false;
+                if (config.Load.Infinite    == null) config.Load.Infinite  = false;
 
                 if (config.Noise.Resolution > config.Load.Time)
                 {
@@ -205,7 +208,7 @@
 
                     SummaryHelper.WriteTickSummary(
                         data[tickIndex], backlog, tasks, currentIterationTime,
-                        nextIterationTime, taskDelta, DateTime.Now);
+                        nextIterationTime, taskDelta, DateTime.Now, config.System.NoStats.Value);
 
                     for (int i = 0; i < data[tickIndex]; i++)
                     {

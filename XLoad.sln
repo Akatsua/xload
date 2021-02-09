@@ -5,6 +5,7 @@ VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XLoad", "src\XLoad\XLoad.csproj", "{23E4ED91-3742-4164-874D-26F93E0CCC40}"
 	ProjectSection(ProjectDependencies) = postProject
+		{3285EB7C-1733-46A4-A090-1EAF57CD98E9} = {3285EB7C-1733-46A4-A090-1EAF57CD98E9}
 		{B4A7D8D8-65FE-4F44-8FF1-375D20EFAB7E} = {B4A7D8D8-65FE-4F44-8FF1-375D20EFAB7E}
 		{39C2CAFD-4D23-456F-880F-CE1C1B7A1147} = {39C2CAFD-4D23-456F-880F-CE1C1B7A1147}
 	EndProjectSection
@@ -13,7 +14,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XLoad.Plugin", "src\XLoad.P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XLoad.Http", "src\XLoad.Http\XLoad.Http.csproj", "{39C2CAFD-4D23-456F-880F-CE1C1B7A1147}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XLoad.Kafka", "src\XLoad.Kafka\XLoad.Kafka.csproj", "{B4A7D8D8-65FE-4F44-8FF1-375D20EFAB7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XLoad.Kafka", "src\XLoad.Kafka\XLoad.Kafka.csproj", "{B4A7D8D8-65FE-4F44-8FF1-375D20EFAB7E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XLoad.Console", "src\XLoad.Console\XLoad.Console.csproj", "{3285EB7C-1733-46A4-A090-1EAF57CD98E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +40,10 @@ Global
 		{B4A7D8D8-65FE-4F44-8FF1-375D20EFAB7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4A7D8D8-65FE-4F44-8FF1-375D20EFAB7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4A7D8D8-65FE-4F44-8FF1-375D20EFAB7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3285EB7C-1733-46A4-A090-1EAF57CD98E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3285EB7C-1733-46A4-A090-1EAF57CD98E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3285EB7C-1733-46A4-A090-1EAF57CD98E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3285EB7C-1733-46A4-A090-1EAF57CD98E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

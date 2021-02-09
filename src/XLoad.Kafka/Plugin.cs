@@ -1,10 +1,7 @@
 ﻿namespace XLoad.Kafka
 {
     using Newtonsoft.Json;
-    using System.Net;
-    using System.Net.Http;
     using System.Threading.Tasks;
-    using Dto;
     using XLoad.Plugin;
     using Confluent.Kafka;
     using System.Linq;

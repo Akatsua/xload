@@ -15,21 +15,23 @@
             DateTime currentIterationTime, 
             DateTime nextIterationTime, 
             int taskDelta, 
-            DateTime currentTimeForLog)
+            DateTime currentTimeForLog,
+            bool noStats)
         {
-            Console.WriteLine($@"
+            LogHelper.ConditionalLog($@"
 [{currentTimeForLog}] Iteration time : {currentIterationTime}
 [{currentTimeForLog}] Next iteration : {nextIterationTime}
 [{currentTimeForLog}] Backlog count  : {backlog.Count}
 [{currentTimeForLog}] Backlog to add : {currentData}
 [{currentTimeForLog}] Backlog sum    : {backlog.Count + currentData}
 [{currentTimeForLog}] Task count     : {tasks.Count}
-[{currentTimeForLog}] Task delta     : {taskDelta}");
+[{currentTimeForLog}] Task delta     : {taskDelta}", 
+                !noStats);
         }
 
         public static void WriteSummary(
             string[] args, 
-            Dto.Config config,
+            Config config,
             int numberOfTicks, 
             List<int> data)
         {
@@ -39,6 +41,7 @@
 || 
 || Settings :
 ||     Dryrun         : {config.System.DryRun    }
+||     NoStats        : {config.System.NoStats   }
 ||     Infinite       : {config.Load.Infinite    }
 ||     Seed           : {config.Noise.Seed       }
 ||     Scale          : {config.Noise.Scale      }

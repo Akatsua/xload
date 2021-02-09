@@ -18,6 +18,7 @@
         public class SystemConfig
         {
             public bool? DryRun { get; set; }
+            public bool? NoStats { get; set; }
             public int? MaxTasks { get; set; }
             public int? MinTasks { get; set; }
             public PluginConfig[] Plugins { get; set; }
